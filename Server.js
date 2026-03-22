@@ -1,32 +1,33 @@
-let http = require("http");
-let url = require("url");
-let fs = require("fs");
+let express = require('express')
+const { error } = require('node:console')
+const { appendFile } = require('node:fs')
+const path = require('node:path')
 
-let fileName 
-http
-  .createServer(function (req, res) {
-    switch (req.url) {
-      case "/":
-        fileName = './index.html'
-        break;
+const App = express()
 
-      case "/about":
-        fileName = './about.html'
-        break;
+App.get("/" , (req,res) => {
+  res.sendFile(path.join(__dirname , 'index.html'))
+})
 
-      case "/contactme" :
-        fileName = './contactme.html'
-        break;
+App.get("/about" , (req,res) => {
+  res.sendFile(path.join(__dirname , 'about.html'))
+})
+
+App.get("/contactme" , (req,res) => {
+  res.sendFile(path.join(__dirname , 'contactme.html'))
+})
 
 
-      default :
-      fileName = './404.html'
 
-    }
+App.listen(3000 , (error) => {
 
-    fs.readFile(fileName, "utf8", function (err, data) {
-      res.writeHead(200, { "Content-Type": "text/html" });
-      res.end(data);
-    });
-  })
-  .listen(8080);
+  if (error) {
+    App.get('/Error404' , (req,res) => {
+      res.sendFile(path.join(__dirname , '404.html'))
+    })
+    throw error
+    
+  }
+
+  console.log("Server is running")
+})
